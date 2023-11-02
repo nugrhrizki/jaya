@@ -1,0 +1,17 @@
+[package]
+name = "system"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+axum = "0.6.20"
+serde_json.workspace = true
+askama.workspace = true
+ramhorns.workspace = true
+tokio.workspace = true
+config = { path = "../config" }
+database = { path = "../database" }
+tower = { version = "0.4.13", features = ["util"] }
+tower-http = { version = "0.4.4", features = ["fs", "trace"] }

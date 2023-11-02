@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{{ error }}</title>
+    <style>
+      body {
+        font-family: "Helvetica Neue", sans-serif;
+        background-color: #c7c7c7;
+        margin: 0;
+        padding: 0;
+        height: 100dvh;
+        display: flex;
+      }
+
+      .error-container {
+        flex: 1;
+        background-color: #fff;
+        border-radius: 8px;
+        margin: 2rem;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #e3342f;
+        font-size: 36px;
+        margin: 0;
+        padding: 0;
+      }
+
+      p {
+        font-size: 18px;
+        margin: 10px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="error-container">
+      <h1>{{ code }}</h1>
+      <p>{{ error }}</p>
+    </div>
+  </body>
+</html>

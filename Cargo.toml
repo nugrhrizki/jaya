@@ -1,0 +1,23 @@
+[package]
+name = "jaya"
+version = "0.1.0"
+edition = "2021"
+
+[workspace]
+members = [".", "config", "database", "system"]
+
+[workspace.dependencies]
+tokio = { version = "1.33.0", features = ["full"] }
+serde = { version = "1.0.190", features = ["derive"] }
+serde_json = { version = "1.0.107", features = ["preserve_order"] }
+askama = "0.12.1"
+ramhorns = "0.14.0"
+
+[dependencies]
+tokio.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+askama.workspace = true
+ramhorns.workspace = true
+system = { path = "system" }
+database = { path = "database" }
