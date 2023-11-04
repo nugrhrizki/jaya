@@ -7,7 +7,7 @@ use axum::{
 #[derive(Debug)]
 pub enum Error {
     Http(axum::Error),
-    Database(database::error::Error),
+    Database(sqlx::Error),
     FailedToStartServer,
     TemplateError(askama::Error),
     PageNotFound,

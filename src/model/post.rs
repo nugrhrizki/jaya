@@ -1,35 +1,58 @@
-use ramhorns::Content;
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use database::{Model, Table};
-use serde_json::Value;
+use sqlx::FromRow;
 
-#[derive(Serialize, Deserialize, Default, Content)]
+#[derive(Serialize, Deserialize, FromRow)]
 pub struct Post {
-    pub id: i32,
-    pub title: String,
-    pub body: String,
-    pub published: bool,
+    pub id: i64,
+    pub title: Option<String>,
+    pub body: Option<String>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: Option<DateTime<Utc>>,
 }
 
-impl Model for Post {
-    fn schema(&self, schema: Table) -> Table {
-        schema
-            .table_name("post")
-            .field("id", Value::Number(self.id.into()))
-            .field("title", Value::String(self.title.clone()))
-            .field("body", Value::String(self.body.clone()))
-            .field("published", Value::Bool(self.published))
+#[derive(Serialize, Deserialize)]
+pub struct PostTemplateData {
+    pub id: i64,
+    pub title: String,
+    pub body: String,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+impl From<&Post> for PostTemplateData {
+    fn from(post: &Post) -> Self {
+        Self {
+            id: post.id,
+            title: post.title.clone().unwrap_or_default(),
+            body: post.body.clone().unwrap_or_default(),
+            created_at: post
+                .created_at
+                .map(|d| d.format("%Y-%m-%d %H:%M:%S").to_string())
+                .unwrap_or_default(),
+            updated_at: post
+                .updated_at
+                .map(|d| d.format("%Y-%m-%d %H:%M:%S").to_string())
+                .unwrap_or_default(),
+        }
     }
 }
 
-impl From<Table> for Post {
-    fn from(schema: Table) -> Self {
-        Post {
-            id: schema.get_i64("id").unwrap_or(0) as i32,
-            title: schema.get_str("title").unwrap_or("").to_string(),
-            body: schema.get_str("body").unwrap_or("").to_string(),
-            published: schema.get_bool("published").unwrap_or(false),
+impl From<Post> for PostTemplateData {
+    fn from(post: Post) -> Self {
+        Self {
+            id: post.id,
+            title: post.title.unwrap_or_default(),
+            body: post.body.unwrap_or_default(),
+            created_at: post
+                .created_at
+                .map(|d| d.format("%Y-%m-%d %H:%M:%S").to_string())
+                .unwrap_or_default(),
+            updated_at: post
+                .updated_at
+                .map(|d| d.format("%Y-%m-%d %H:%M:%S").to_string())
+                .unwrap_or_default(),
         }
     }
 }

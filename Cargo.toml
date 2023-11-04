@@ -10,8 +10,14 @@ members = [".", "config", "database", "system"]
 tokio = { version = "1.33.0", features = ["full"] }
 serde = { version = "1.0.190", features = ["derive"] }
 serde_json = { version = "1.0.107", features = ["preserve_order"] }
-askama = "0.12.1"
+askama = { version = "0.12.1", features = ["serde-json"] }
 ramhorns = "0.14.0"
+sqlx = { version = "0.7.2", features = [
+    "chrono",
+    "postgres",
+    "runtime-tokio-rustls",
+] }
+chrono = { version = "0.4.31", features = ["serde"] }
 
 [dependencies]
 tokio.workspace = true
@@ -19,5 +25,7 @@ serde.workspace = true
 serde_json.workspace = true
 askama.workspace = true
 ramhorns.workspace = true
+sqlx.workspace = true
+chrono = { workspace = true }
 system = { path = "system" }
 database = { path = "database" }

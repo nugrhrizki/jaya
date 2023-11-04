@@ -11,6 +11,7 @@ serde_json.workspace = true
 askama.workspace = true
 ramhorns.workspace = true
 tokio.workspace = true
+sqlx.workspace = true
 config = { path = "../config" }
 database = { path = "../database" }
 tower = { version = "0.4.13", features = ["util"] }

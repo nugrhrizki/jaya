@@ -1,28 +1,23 @@
 {% extends "layouts/base.html" %}
-{% block title %}Welcome home{% endblock %}
+{% block title %}Posts{% endblock %}
 {% block body %}
+  <div class="container m-4 mx-auto">
+    <a
+      href="/post/create"
+      class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none">
+      Create Post
+    </a>
+  </div>
   <div class="container m-4 mx-auto grid grid-cols-4 gap-4">
     {% for post in posts %}
-      <div class="max-w-sm overflow-hidden rounded shadow-lg">
+      <a
+        class="max-w-sm overflow-hidden rounded shadow-lg"
+        href="/post/{{ post.id }}">
         <div class="px-6 py-4">
           <div class="mb-2 text-xl font-bold">{{ post.title }}</div>
           <p class="text-base text-gray-700">{{ post.body }}</p>
         </div>
-        <div class="px-6 pb-2 pt-4">
-          <span
-            class="mb-2 mr-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-            #photography
-          </span>
-          <span
-            class="mb-2 mr-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-            #travel
-          </span>
-          <span
-            class="mb-2 mr-2 inline-block rounded-full bg-gray-200 px-3 py-1 text-sm font-semibold text-gray-700">
-            #winter
-          </span>
-        </div>
-      </div>
+      </a>
     {% endfor %}
   </div>
 {% endblock body %}

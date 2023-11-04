@@ -1,8 +1,7 @@
-pub mod error;
+mod error;
 
 use std::{net::SocketAddr, sync::Arc};
 
-use crate::error::Error;
 use askama::Template;
 pub use axum::*;
 use axum::{
@@ -13,6 +12,8 @@ use axum::{
 use config::Config;
 use database::DB;
 use tower_http::services::ServeDir;
+
+pub use crate::error::Error;
 
 pub type Result<T> = std::result::Result<T, Error>;
 

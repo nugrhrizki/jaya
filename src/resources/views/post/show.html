@@ -1,0 +1,54 @@
+{% extends "layouts/base.html" %}
+{% block title %}{{ post.title }}{% endblock %}
+{% block body %}
+  <div class="container m-4 mx-auto">
+    <button
+      id="go-back"
+      class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none">
+      Go Back
+    </button>
+    <button
+      id="btn-delete-post"
+      class="focus:shadow-outline rounded bg-red-500 px-4 py-2 font-bold text-white hover:bg-red-700 focus:outline-none">
+      Delete Post
+    </button>
+    <button
+      id="btn-edit-post"
+      class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none">
+      Edit Post
+    </button>
+  </div>
+  <div class="container m-4 mx-auto grid grid-cols-4 gap-4">
+    <div class="px-6 py-4">
+      <div class="mb-2 text-xl font-bold">{{ post.title }}</div>
+      <p class="text-base text-gray-700">{{ post.body }}</p>
+    </div>
+  </div>
+{% endblock body %}
+{% block scripts %}
+  <script>
+    var post = {{post|json|safe}};
+    const btnDeletePost = document.querySelector("#btn-delete-post");
+    btnDeletePost.addEventListener("click", async (e) => {
+      e.preventDefault();
+      const response = await fetch(`/post/${post.id}/delete`, {
+        method: "DELETE",
+      });
+      if (response.ok) {
+        window.location.href = "/post";
+      }
+    });
+
+    const btnEditPost = document.querySelector("#btn-edit-post");
+    btnEditPost.addEventListener("click", async (e) => {
+      e.preventDefault();
+      window.location.href = `/post/${post.id}/edit`;
+    });
+
+    const goBack = document.querySelector("#go-back");
+    goBack.addEventListener("click", async (e) => {
+      e.preventDefault();
+      history.back();
+    });
+  </script>
+{% endblock scripts %}
