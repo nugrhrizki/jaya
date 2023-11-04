@@ -1,4 +1,7 @@
-use system::{routing::get, Router};
+use system::{
+    routing::{delete, get},
+    Router,
+};
 
 use crate::controllers::{HomeController, PostController};
 
@@ -15,9 +18,7 @@ pub fn web() -> Router {
                 "/:id/edit",
                 get(PostController::edit).put(PostController::update),
             )
-            .route(
-                "/:id",
-                get(PostController::show).delete(PostController::delete),
-            ),
+            .route("/:id/delete", delete(PostController::delete))
+            .route("/:id", get(PostController::show)),
     )
 }
