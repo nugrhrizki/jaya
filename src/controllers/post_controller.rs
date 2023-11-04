@@ -7,9 +7,8 @@ use system::{
     Error, Json, Response,
 };
 
+use crate::controllers::PostController;
 use crate::model::post::{Post, PostTemplateData};
-
-pub struct PostController;
 
 #[derive(Template)]
 #[template(path = "post.html")]

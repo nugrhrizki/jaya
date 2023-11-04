@@ -1,2 +1,5 @@
-pub mod home_controller;
-pub mod post_controller;
+mod home_controller;
+mod post_controller;
+
+pub struct HomeController;
+pub struct PostController;

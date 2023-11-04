@@ -1,9 +1,8 @@
 use askama::Template;
 use system::{extract::State, response::IntoResponse, Error, Response};
 
+use crate::controllers::HomeController;
 use crate::model::post::{Post, PostTemplateData};
-
-pub struct HomeController;
 
 #[derive(Template)]
 #[template(path = "index.html")]
