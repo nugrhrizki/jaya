@@ -63,3 +63,27 @@ impl Config {
         Self::default()
     }
 }
+
+pub struct Menu {
+    pub name: &'static str,
+    pub url: &'static str,
+    pub icon: &'static str,
+}
+
+pub const MENU: [Menu; 3] = [
+    Menu {
+        name: "Dashboard",
+        url: "/",
+        icon: "lucide:home",
+    },
+    Menu {
+        name: "Post",
+        url: "/post",
+        icon: "lucide:file-text",
+    },
+    Menu {
+        name: "User",
+        url: "/user",
+        icon: "lucide:user",
+    },
+];

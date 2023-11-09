@@ -1,6 +1,13 @@
-{% extends "layouts/base.html" %}
-{% block title %}Welcome home{% endblock %}
-{% block body %}
+{% extends "layouts/dashboard.html" %}
+{% block title %}Posts{% endblock %}
+{% block content %}
+  <div class="container m-4 mx-auto">
+    <a
+      href="/post/create"
+      class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none">
+      Create Post
+    </a>
+  </div>
   <div class="container m-4 mx-auto grid grid-cols-4 gap-4">
     {% for post in posts %}
       <a
@@ -13,4 +20,4 @@
       </a>
     {% endfor %}
   </div>
-{% endblock body %}
+{% endblock content %}

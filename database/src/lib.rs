@@ -15,7 +15,7 @@ impl DB {
     pub async fn connect(conn_str: &str) -> Result<Self, sqlx::Error> {
         Ok(DB {
             pool: PgPoolOptions::new()
-                .acquire_timeout(Duration::from_secs(5))
+                .acquire_timeout(Duration::from_secs(10))
                 .idle_timeout(Some(Duration::from_secs(60)))
                 .connect(conn_str)
                 .await?,

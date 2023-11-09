@@ -1,16 +1,21 @@
-<div
-  class="block hidden w-full flex-grow lg:flex lg:w-auto lg:items-center"
-  id="nav">
-  <div class="text-sm lg:flex-grow">
-    <a
-      href="/"
-      class="mr-4 mt-4 block text-teal-200 hover:text-white lg:mt-0 lg:inline-block">
-      Home
-    </a>
-    <a
-      href="/post"
-      class="mr-4 mt-4 block text-teal-200 hover:text-white lg:mt-0 lg:inline-block">
-      Posts
-    </a>
-  </div>
-</div>
+<nav class="app-navigation overflow-auto">
+  <ul class="py-6">
+    <li>
+      <span class="inline-block px-5 py-2 text-xs uppercase text-gray-500">
+        Menu
+      </span>
+    </li>
+    {% for menu in config::MENU %}
+      <li>
+        <a
+          href="{{ menu.url }}"
+          class="flex items-center gap-2 px-5 py-2 text-gray-600">
+          <iconify-icon
+            icon="{{ menu.icon }}"
+            class="flex h-6 w-6 items-center justify-center text-lg"></iconify-icon>
+          <span>{{ menu.name }}</span>
+        </a>
+      </li>
+    {% endfor %}
+  </ul>
+</nav>

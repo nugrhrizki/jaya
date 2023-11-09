@@ -1,24 +1,12 @@
-use system::{
-    routing::{delete, get},
-    Router,
-};
+mod api;
+mod web;
 
-use crate::controllers::{HomeController, PostController};
+use system::{panic_handler, Router};
+use tower_http::catch_panic::CatchPanicLayer;
 
-pub fn web() -> Router {
-    Router::new().route("/", get(HomeController::index)).nest(
-        "/post",
-        Router::new()
-            .route("/", get(PostController::index))
-            .route(
-                "/create",
-                get(PostController::create).post(PostController::save),
-            )
-            .route(
-                "/:id/edit",
-                get(PostController::edit).put(PostController::update),
-            )
-            .route("/:id/delete", delete(PostController::delete))
-            .route("/:id", get(PostController::show)),
-    )
+pub fn setup() -> Router {
+    Router::new()
+        .nest("/api", api::router())
+        .nest("/", web::router())
+        .layer(CatchPanicLayer::custom(panic_handler))
 }

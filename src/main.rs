@@ -1,14 +1,11 @@
 mod controllers;
-mod model;
+mod data;
 mod routes;
 
 use system::System;
 
-#[tokio::main]
-async fn main() {
-    let app = System::with_router(routes::web());
-
-    if let Err(e) = app.run().await {
+fn main() {
+    if let Err(e) = System::with_router(routes::setup()).prefork(0).run() {
         panic!("{e}");
     }
 }

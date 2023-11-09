@@ -1,6 +1,6 @@
-{% extends "layouts/base.html" %}
-{% block title %}Create Post{% endblock %}
-{% block body %}
+{% extends "layouts/auth.html" %}
+{% block title %}Auntentication{% endblock %}
+{% block content %}
   <div class="container m-4 mx-auto grid grid-cols-4 gap-4">
     <form id="form-create-post">
       <div class="mb-4">
@@ -32,24 +32,4 @@
       </div>
     </form>
   </div>
-{% endblock body %}
-{% block scripts %}
-  <script>
-    const formCreatePost = document.querySelector("#form-create-post");
-    formCreatePost.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const title = document.querySelector("#title").value;
-      const body = document.querySelector("#body").value;
-      const response = await fetch("/post/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ title, body }),
-      });
-      if (response.ok) {
-        window.location.href = "/post";
-      }
-    });
-  </script>
-{% endblock scripts %}
+{% endblock content %}

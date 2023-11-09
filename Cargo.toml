@@ -6,10 +6,14 @@ edition = "2021"
 [workspace]
 members = [".", "config", "database", "system"]
 
+[profile.dev.package.askama_derive]
+opt-level = 3
+
 [workspace.dependencies]
 tokio = { version = "1.33.0", features = ["full"] }
 serde = { version = "1.0.190", features = ["derive"] }
 serde_json = { version = "1.0.107", features = ["preserve_order"] }
+tower-http = { version = "0.4.4", features = ["full"] }
 askama = { version = "0.12.1", features = ["serde-json"] }
 ramhorns = "0.14.0"
 sqlx = { version = "0.7.2", features = [
@@ -26,6 +30,8 @@ serde_json.workspace = true
 askama.workspace = true
 ramhorns.workspace = true
 sqlx.workspace = true
+tower-http.workspace = true
 chrono = { workspace = true }
 system = { path = "system" }
+config = { path = "config" }
 database = { path = "database" }

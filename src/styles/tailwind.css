@@ -1,3 +1,56 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --jaya-vertical-menu-width: 250px;
+  --jaya-header-height: 70px;
+}
+
+.header {
+  @apply fixed right-0 top-0 z-10 flex items-center justify-between border-b border-slate-200 bg-white px-4;
+  height: var(--jaya-header-height);
+  left: var(--jaya-vertical-menu-width);
+}
+
+.header-container {
+  height: var(--jaya-header-height);
+}
+
+.app-menu {
+  @apply fixed left-0 top-0 z-10 flex h-full flex-col border-r border-slate-200 bg-slate-100;
+  width: var(--jaya-vertical-menu-width);
+}
+
+.app-navigation {
+  @apply flex-1;
+}
+
+.main-content {
+  margin-left: var(--jaya-vertical-menu-width);
+}
+
+.brand-box {
+  @apply flex items-center justify-center;
+  min-height: var(--jaya-header-height);
+}
+
+.logo {
+  line-height: var(--jaya-header-height);
+}
+
+.logo img {
+  vertical-align: middle;
+}
+
+.card {
+  @apply rounded border bg-white;
+}
+
+.card-header {
+  @apply flex flex-row items-center justify-between space-y-0 p-4 pb-2;
+}
+
+.card-content {
+  @apply p-4 pt-0;
+}

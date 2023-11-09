@@ -1,6 +1,6 @@
-{% extends "layouts/base.html" %}
+{% extends "layouts/dashboard.html" %}
 {% block title %}{{ post.title }}{% endblock %}
-{% block body %}
+{% block content %}
   <div class="container m-4 mx-auto">
     <button
       id="go-back"
@@ -24,7 +24,7 @@
       <p class="text-base text-gray-700">{{ post.body }}</p>
     </div>
   </div>
-{% endblock body %}
+{% endblock content %}
 {% block scripts %}
   <script>
     var post = {{post|json|safe}};

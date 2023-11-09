@@ -1,6 +1,10 @@
 mod error;
+mod utils;
 
-use std::{net::SocketAddr, sync::Arc};
+use std::{
+    net::{SocketAddr, TcpListener},
+    sync::Arc,
+};
 
 use askama::Template;
 pub use axum::*;
@@ -11,31 +15,35 @@ use axum::{
 };
 use config::Config;
 use database::DB;
+use prefork::{Prefork, DEFAULT_NUM_PROCESSES};
+use tokio::runtime::Builder;
 use tower_http::services::ServeDir;
 
-pub use crate::error::Error;
+pub use crate::error::{panic_handler, Error};
+pub use crate::utils::*;
 
 pub type Result<T> = std::result::Result<T, Error>;
 
-pub struct SystemState {
+pub struct State {
     pub db: DB,
 }
 
-pub type State = axum::extract::State<Arc<SystemState>>;
+pub type AppState = Arc<State>;
 
-pub type Router = axum::Router<Arc<SystemState>>;
+pub type Router = axum::Router<AppState>;
 
 pub type Response<T> = Result<T>;
 
 pub struct System {
     address: SocketAddr,
+    prefork: u32,
     router: Router,
     config_path: String,
     config: Config,
     db: Option<DB>,
 }
 
-impl SystemState {
+impl State {
     pub fn render<T>(&self, template: T) -> AxumResponse
     where
         T: Template,
@@ -50,6 +58,7 @@ impl SystemState {
 impl Default for System {
     fn default() -> Self {
         Self {
+            prefork: 1,
             address: "0.0.0.0:3000".parse().unwrap(),
             router: Router::new().route("/", get(|| async { "Hello, World!" })),
             config_path: "".to_string(),
@@ -100,6 +109,11 @@ impl System {
         self
     }
 
+    pub fn prefork(mut self, num_process: u32) -> Self {
+        self.prefork = num_process;
+        self
+    }
+
     pub fn db(mut self, db: DB) -> Self {
         self.db = Some(db);
         self
@@ -125,18 +139,17 @@ impl System {
         self
     }
 
+    pub fn set_prefork(&mut self, num_process: u32) -> &mut Self {
+        self.prefork = num_process;
+        self
+    }
+
     pub fn set_db(&mut self, db: DB) -> &mut Self {
         self.db = Some(db);
         self
     }
 
-    pub async fn run(&self) -> Result<()> {
-        async fn not_found() -> Result<()> {
-            Err(Error::PageNotFound)
-        }
-
-        let public_dir = ServeDir::new("public").not_found_service(not_found.into_service());
-
+    async fn create_state(&self) -> AppState {
         let mut config = self.config.clone();
 
         if !self.config_path.is_empty() {
@@ -145,23 +158,86 @@ impl System {
 
         let db = match self.db.clone() {
             Some(db) => db,
-            None => DB::connect(&config.database.to_database_url())
-                .await
-                .map_err(|e| Error::Database(e))?,
+            None => match DB::connect(&config.database.to_database_url()).await {
+                Ok(db) => db,
+                Err(e) => {
+                    panic!("Failed to connect to database: {}", e);
+                }
+            },
         };
 
-        let state = Arc::new(SystemState { db });
+        Arc::new(State { db })
+    }
 
-        Server::bind(&self.address)
+    async fn server(&self, listener: TcpListener) -> Result<()> {
+        async fn not_found() -> Error {
+            Error::PageNotFound
+        }
+
+        let public_dir = ServeDir::new("public").not_found_service(not_found.into_service());
+
+        Server::from_tcp(listener)
+            .map_err(|_| Error::FailedToStartServer)?
             .serve(
                 self.router
                     .clone()
-                    .with_state(state)
+                    .with_state(self.create_state().await)
                     .fallback_service(public_dir)
                     .into_make_service(),
             )
             .await
             .map_err(|_| Error::FailedToStartServer)?;
+
+        Ok(())
+    }
+
+    pub fn run(self) -> Result<()> {
+        let listener = TcpListener::bind(self.address).expect("Failed to bind to address");
+        if self.prefork == 1 {
+            Builder::new_multi_thread()
+                .enable_all()
+                .build()
+                .expect("cannot create runtime")
+                .block_on(async {
+                    match self.server(listener).await {
+                        Ok(_) => {}
+                        Err(e) => {
+                            eprintln!("Failed to start server: {}", e);
+                            return;
+                        }
+                    }
+                })
+        } else {
+            let num_processes = if self.prefork != 0 {
+                self.prefork
+            } else {
+                DEFAULT_NUM_PROCESSES
+            };
+            if Prefork::from_resource((listener, self))
+                .with_num_processes(num_processes)
+                .with_init(|child_num, (listener, app)| {
+                    Builder::new_multi_thread()
+                        .enable_all()
+                        .build()
+                        .expect("cannot create runtime")
+                        .block_on(async {
+                            let pid = std::process::id();
+                            println!("Child {} (PID {}) started", child_num, pid);
+                            match app.server(listener).await {
+                                Ok(_) => {}
+                                Err(e) => {
+                                    eprintln!("Failed to start server: {}", e);
+                                    return;
+                                }
+                            }
+                        })
+                })
+                .fork()
+                .map_err(|_| Error::FailedToStartServer)?
+            {
+                println!("Parent is exiting");
+            }
+        }
 
         Ok(())
     }

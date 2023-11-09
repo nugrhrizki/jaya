@@ -1,0 +1,56 @@
+{% extends "layouts/dashboard.html" %}
+{% block title %}Edit Post{% endblock %}
+{% block content %}
+  <div class="container m-4 mx-auto grid grid-cols-4 gap-4">
+    <form id="form-edit-post">
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="title">
+          Title
+        </label>
+        <input
+          class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+          value="{{ post.title }}"
+          id="title"
+          type="text"
+          placeholder="Title" />
+      </div>
+      <div class="mb-4">
+        <label class="mb-2 block text-sm font-bold text-gray-700" for="body">
+          Body
+        </label>
+        <textarea
+          class="focus:shadow-outline w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:outline-none"
+          id="body"
+          type="text"
+          placeholder="Body">{{ post.body }}</textarea>
+      </div>
+      <div class="flex items-center justify-between">
+        <button
+          class="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
+          type="submit">
+          Edit
+        </button>
+      </div>
+    </form>
+  </div>
+{% endblock content %}
+{% block scripts %}
+  <script>
+    var post = {{post|json|safe}};
+    document.querySelector("#form-edit-post").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = document.querySelector("#title").value;
+      const body = document.querySelector("#body").value;
+      const response = await fetch(`/post/${post.id}/edit`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ title, body }),
+      });
+      if (response.ok) {
+        window.location.href = `/post/${post.id}`;
+      }
+    });
+  </script>
+{% endblock scripts %}

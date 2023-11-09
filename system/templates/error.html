@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -39,7 +39,10 @@
   <body>
     <div class="error-container">
       <h1>{{ code }}</h1>
-      <p>{{ error }}</p>
+      <p>{{ error.kind }}</p>
+      <pre>
+        {{ error.details }}
+      </pre>
     </div>
   </body>
 </html>
