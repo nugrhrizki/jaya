@@ -4,8 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="/favicon.svg" type="image/x-icon" />
-    <link rel="stylesheet" href="/css/tailwind.css" />
     <script src="https://cdn.jsdelivr.net/npm/iconify-icon@1.0.8/dist/iconify-icon.min.js"></script>
+    {% if !system::PRODUCTION %}
+      <script type="module" src="http://localhost:5173/@vite/client"></script>
+      <script type="module" src="{{ system::asset("/main.ts") }}"></script>
+      <script type="module" src="{{ system::asset("/another.ts") }}"></script>
+    {% else %}
+      <link rel="stylesheet" href="{{ system::asset("/main.css") }}" />
+      <script type="module" src="{{ system::asset("/main.ts") }}"></script>
+      <script type="module" src="{{ system::asset("/another.ts") }}"></script>
+    {% endif %}
     <title>{% block title %}Jaya framework{% endblock %}</title>
     {% block head %}{% endblock %}
   </head>

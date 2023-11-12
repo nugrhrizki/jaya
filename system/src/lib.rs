@@ -1,6 +1,11 @@
 mod error;
 mod utils;
 
+#[cfg(not(debug_assertions))]
+use serde_json::Value;
+#[cfg(not(debug_assertions))]
+use std::cell::OnceCell;
+
 use std::{
     net::{SocketAddr, TcpListener},
     sync::Arc,
@@ -26,6 +31,22 @@ pub type Result<T> = std::result::Result<T, Error>;
 
 pub struct State {
     pub db: DB,
+}
+
+#[cfg(debug_assertions)]
+pub const PRODUCTION: bool = false;
+
+#[cfg(not(debug_assertions))]
+pub const PRODUCTION: bool = true;
+
+#[cfg(not(debug_assertions))]
+pub const MANIFEST: OnceCell<Value> = OnceCell::new();
+
+#[cfg(not(debug_assertions))]
+fn get_manifest() -> Value {
+    let manifest_path = std::path::Path::new("public/manifest.json");
+    let manifest = std::fs::read_to_string(manifest_path).unwrap();
+    serde_json::from_str(&manifest).unwrap()
 }
 
 pub type AppState = Arc<State>;
@@ -240,5 +261,22 @@ impl System {
         }
 
         Ok(())
+    }
+}
+
+pub fn asset(path: &str) -> String {
+    #[cfg(debug_assertions)]
+    return format!("http://localhost:5173/src/resources/assets{}", path);
+    #[cfg(not(debug_assertions))]
+    return get_asset_from_manifest(path);
+}
+
+#[cfg(not(debug_assertions))]
+fn get_asset_from_manifest(path: &str) -> String {
+    let binding = MANIFEST;
+    let manifest = binding.get_or_init(get_manifest);
+    match &manifest[format!("src/resources/assets{}", path)]["file"] {
+        Value::String(s) => format!("/{}", s),
+        _ => path.to_string(),
     }
 }

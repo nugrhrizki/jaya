@@ -1,5 +1,5 @@
-module.exports = {
-  purge: ["./src/resources/**/*.html"],
+export default {
+  content: ["./src/resources/**/*.html"],
   theme: {
     extend: {},
   },
